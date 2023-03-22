@@ -73,6 +73,7 @@ public class MemberService {
     }
 
 	//소셜로그인 토큰 받아오기
+	/* 프론트에서 해주는건데 내가 구현한거래... 나 이걸로 일주일을 하루에 7,8시간씩 머리싸맸는데...
 	public String getAccessToken(String authorize_code) {
 		String access_Token = "";
 		String refresh_Token = "";
@@ -95,8 +96,8 @@ public class MemberService {
 			bw.write(sb.toString());
 			bw.flush();
 
-			int responseCode = conn.getResponseCode();
-			System.out.println("responseCode : " + responseCode);
+			//int responseCode = conn.getResponseCode();
+			//System.out.println("responseCode : " + responseCode);
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String line = "";
@@ -105,7 +106,7 @@ public class MemberService {
 			while ((line = br.readLine()) != null) {
 				result += line;
 			}
-			System.out.println("response body : " + result);
+			//System.out.println("response body : " + result);
 
 
 			JsonParser parser = new JsonParser();
@@ -114,8 +115,8 @@ public class MemberService {
 			access_Token = element.getAsJsonObject().get("access_token").getAsString();
 			refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
 
-			System.out.println("access_token : " + access_Token);
-			System.out.println("refresh_token : " + refresh_Token);
+			//System.out.println("access_token : " + access_Token);
+			//System.out.println("refresh_token : " + refresh_Token);
 
 			br.close();
 			bw.close();
@@ -125,6 +126,7 @@ public class MemberService {
 
 		return access_Token;
 	}
+	*/
 
 	//소셜로그인 회원 정보 가져오기
 	public HashMap<String, Object> getUserInfo(String access_Token) {
@@ -138,8 +140,8 @@ public class MemberService {
 
 			conn.setRequestProperty("Authorization", "Bearer " + access_Token);
 
-			int responseCode = conn.getResponseCode();
-			System.out.println("responseCode : " + responseCode);
+			//int responseCode = conn.getResponseCode();
+			//System.out.println("responseCode : " + responseCode);
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
@@ -149,7 +151,7 @@ public class MemberService {
 			while ((line = br.readLine()) != null) {
 				result += line;
 			}
-			System.out.println("response body : " + result);
+			//System.out.println("response body : " + result);
 
 			JsonParser parser = new JsonParser();
 			JsonElement element = parser.parse(result);
@@ -162,11 +164,10 @@ public class MemberService {
 			String gender = kakao_account.getAsJsonObject().get("gender").getAsString();
 			String birth = kakao_account.getAsJsonObject().get("birthday").getAsString();
 
-
-			userInfo.put("member_name", nickname);
-			userInfo.put("member_mail", email);
-			userInfo.put("member_gender", gender);
-			userInfo.put("member_birth", birth);
+			userInfo.put("membermail", email);
+			userInfo.put("membernickname", nickname);
+			userInfo.put("membergender", gender);
+			userInfo.put("memberbirth", birth);
 
 
 		} catch (IOException e) {

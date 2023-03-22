@@ -4,33 +4,36 @@ import java.sql.Timestamp;
 
 import javax.persistence.*;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity(name = "article")
 @Data
+@NoArgsConstructor
 public class BoardEntity {
 
 	@Id
 	@Column(name="article_id", nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer article_id;
+	private Integer articleid;
 
 	@Column(name = "article_title", nullable = false)
-	private String article_title;
+	private String articletitle;
 
-	@Column(name = "article_content_fp", nullable = false)
-	private String article_contnet_fp;
+	@Column(name = "photo_fp", nullable = false)
+	private String photofp;
 
 	@Column(name = "price", nullable = false)
 	private String price;
 
-	@Column(name = "region_id", nullable = false)
-	private String regionid;
-
-	//region 에서 region_id 가져와서 사용
-	/*@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "region_id")
-	private RegionEntity regionId;*/
+	@Builder
+	public BoardEntity(Integer articleid, String articletitle, String price, String photofp){
+		this.articleid = articleid;
+		this.articletitle = articletitle;
+		this.price = price;
+		this.photofp = photofp;
+	}
 
 
 }

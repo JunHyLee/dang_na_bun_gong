@@ -59,16 +59,16 @@ public class BoardController {
 
 
 	//게시물 리스트 보기 (실패)
-    /*@GetMapping("/articleList")
+    @GetMapping("/articleList")
     public @ResponseBody ResultVo articleList(
             @PageableDefault(page = 0, size = 5)Pageable pageable, HttpSession httpSession) {
 
-        String regionid = (String)httpSession.getAttribute("regionid");
-        Page<BoardEntity> Articlelist = boardService.articleListAll(pageable);
+        Integer regionid = 23080;
+        Page<BoardEntity> articlelist = boardService.articleListAll(pageable, regionid);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("ArticleList", Articlelist);
+        jsonObject.put("ArticleList", articlelist.toString());
 
-        return new ResultVo(0, "ture", "제발성공", jsonObject.toString());
-    }*/
+        return new ResultVo(0, "ture", "이게 안돼?", jsonObject.toString());
+    }
 
 }

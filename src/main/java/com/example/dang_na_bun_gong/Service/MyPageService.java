@@ -39,4 +39,6 @@ public class MyPageService {
     public List<ArticleDto> myPage_likeListAll(String memberid){
         return myPageRepository.likeListAll(memberid);
     }
+
+
 }

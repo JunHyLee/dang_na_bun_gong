@@ -23,6 +23,6 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Integer>, Jp
 	@Query(value = "SELECT article_id, article_title, article_content_fp, price, article.region_id, region.region_name FROM article join region on article.region_id = region.region_id ORDER BY like_cnt DESC LIMIT 15", nativeQuery = true)
 	List<ArticleDto> popularArticle();
 
-	@Query(value = "SELECT article_id, article_title, article_content_fp, price, article.region_id, region.region_name FROM article JOIN region ON article.region_id = region.region_id ORDER BY article_created DESC", countQuery ="SELECT count(*) FROM article", nativeQuery = true)
-	Page<BoardEntity> articleList(Pageable pageable);
+	@Query(value = "Select article_id, photo_fp, article_title, price From article Where article.region_id = :regionid Order by article_created DESC", countQuery ="SELECT COUNT(*) FROM article", nativeQuery = true)
+	Page<BoardEntity> articleList(Pageable pageable, Integer regionid);
 }

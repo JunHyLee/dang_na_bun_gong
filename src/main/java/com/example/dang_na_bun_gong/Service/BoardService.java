@@ -27,8 +27,8 @@ public class BoardService {
         return boardRepository.popularArticle();
     }
 
-    public Page<BoardEntity> articleListAll(Pageable pageable){
-        return boardRepository.articleList(pageable);
+    public Page<BoardEntity> articleListAll(Pageable pageable, Integer regionid){
+        return boardRepository.articleList(pageable, regionid);
     }
 
 	//articleList 페이지 (아직 실패)

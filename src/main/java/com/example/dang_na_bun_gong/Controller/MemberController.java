@@ -2,6 +2,7 @@ package com.example.dang_na_bun_gong.Controller;
 
 import com.example.dang_na_bun_gong.DTO.MemberJoinDto;
 import com.example.dang_na_bun_gong.DTO.MemberLoginDto;
+import com.example.dang_na_bun_gong.DTO.MyPageMemberDto;
 import com.example.dang_na_bun_gong.Vo.ResultVo;
 import com.example.dang_na_bun_gong.Entity.MemberEntity;
 import com.example.dang_na_bun_gong.Repository.MemberRepository;
@@ -14,14 +15,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
 
+import java.lang.reflect.Member;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -166,6 +169,24 @@ public class MemberController {
 
 	}
 
+	//카카오 소셜로그인
+	@RequestMapping("/kakaoLogin")
+	// https://kauth.kakao.com/oauth/authorize?client_id=0aab8850b0f1de3b11837d1e5e945b8b&redirect_uri=http://localhost:8080/kakaoLogin&response_type=code 입력해야함.
+	public @ResponseBody ResultVo kakaoLogin(@RequestParam(value = "code", required = false) String access_Token) {
+		//String access_Token = memberService.getAccessToken(code); access 토큰은 프론트에서 넘겨줌
+		HashMap<String, Object> userInfo = memberService.getUserInfo(access_Token);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("kakaoLoginInfo", userInfo.toString());
+
+		Object member_nickname = userInfo.get("member_nickname"); //카카오에서 넘어온 회원정보가 userInfo에 저장되어있는지 확인
+
+		if(member_nickname == null){
+			return new ResultVo(109, "false", "서버오류");
+		}else {
+			return new ResultVo(0, "ture", "카카오 정보 출력 성공", jsonObject.toString());
+		}
+	}
+
 	// 회원 리스트 처리
 	@GetMapping("/member/list")
 	public String memberList(Model model,
@@ -183,16 +204,40 @@ public class MemberController {
 	// 회원정보 수정
 	@GetMapping("/memberUpdate")
 	public @ResponseBody ResultVo memberUpdate(HttpSession httpSession){
-		String memberid = httpSession.getAttribute("memberid").toString();;
+		String memberid = httpSession.getAttribute("memberid").toString();
 		if(memberid == null){
 			return new ResultVo(101, "false", "비로그인상태");
 		}else{
 		List<MemberEntity> findEntity = memberService.getMemberInfo(memberid);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("memberinfo", findEntity);
-		return new ResultVo(0, "true", "출력", jsonObject.toString());
+		return new ResultVo(0, "true", "success", jsonObject.toString());
 		}
 	}
+
+	//회원정보 저장하기
+	@PatchMapping("memberUpdateDo")
+	public @ResponseBody ResultVo memberUpdateDo(HttpSession httpSession, MemberEntity memberEntity){
+			String memberid = httpSession.getAttribute("memberid").toString();
+			List<MemberEntity> findEntity = memberService.getMemberInfo(memberid);
+			if(memberid != null) {
+				findEntity.get(0).setMembername(memberEntity.getMembername()); // 이름
+				findEntity.get(0).setMemberNickname(memberEntity.getMembernickname()); // 닉네임
+				findEntity.get(0).setMembertel(memberEntity.getMembertel()); // 전화번호
+				findEntity.get(0).setMembermail(memberEntity.getMembermail()); // 이메일
+				findEntity.get(0).setMemberregion(memberEntity.getMemberregion()); // 지역코드
+				findEntity.get(0).setMemberphotofp(memberEntity.getMemberphotofp());
+				findEntity.get(0).setMemberintro(memberEntity.getMemberintro());// 소개글(짧은글)
+				LocalDateTime now = LocalDateTime.now();
+				findEntity.get(0).setMemberchanged(Timestamp.valueOf(now)); // 수정시간(현재)
+
+				memberService.memberUpdate(findEntity); // memberInfo에 저장한 값 DB로 저장
+				return new ResultVo(0, "ture", "변경완료");
+			}
+			else {
+				return new ResultVo(101, "false", "변경실패");
+			}
+			}
 
 	/*@PostMapping("/memberUpdateDo")
 	public @ResponseBody ResultVo memberUpdateDo(HttpSession httpSession, MemberUpdateEntity memberUpdateEntity) {
