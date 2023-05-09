@@ -10,6 +10,10 @@ import java.util.UUID;
 import com.example.dang_na_bun_gong.DTO.ArticleDto;
 import com.example.dang_na_bun_gong.DTO.ArticleWriteDto;
 import com.example.dang_na_bun_gong.Entity.ArticleEntity;
+import com.example.dang_na_bun_gong.Entity.ArticleListAllEntity;
+import com.example.dang_na_bun_gong.Entity.ArticleListEntity;
+import com.example.dang_na_bun_gong.Repository.ArticleListAllRepository;
+import com.example.dang_na_bun_gong.Repository.ArticleListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +27,11 @@ public class ArticleService {
 	
 	@Autowired
 	private ArticleRepository articleRepository;
+    @Autowired
+    private ArticleListRepository articleListRepository;
+    @Autowired
+    private ArticleListAllRepository articleListAllRepository;
+
 
 
     //main페이지
@@ -34,8 +43,11 @@ public class ArticleService {
         return articleRepository.popularArticle();
     }
 
-    public Page<ArticleEntity> articleListAll(Pageable pageable, Integer regionid){
-        return articleRepository.articleList(pageable, regionid);
+    public Page<ArticleListAllEntity> articleListAll(Pageable pageable, Integer regionid){
+        return articleListAllRepository.articleListAll(pageable, regionid);
+    }
+    public Page<ArticleListEntity> articleList(Pageable pageable, Integer regionid, Integer pcategoryid){
+        return articleListRepository.articleList(pageable, regionid, pcategoryid);
     }
 
     public void write(ArticleWriteDto article, List<MultipartFile> file) throws IOException {

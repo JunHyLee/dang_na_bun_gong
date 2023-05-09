@@ -4,6 +4,8 @@ import com.example.dang_na_bun_gong.DTO.ArticleDto;
 import com.example.dang_na_bun_gong.DTO.ArticleWriteDto;
 import com.example.dang_na_bun_gong.DTO.MainDto;
 import com.example.dang_na_bun_gong.Entity.ArticleEntity;
+import com.example.dang_na_bun_gong.Entity.ArticleListAllEntity;
+import com.example.dang_na_bun_gong.Entity.ArticleListEntity;
 import com.example.dang_na_bun_gong.Service.ArticleService;
 import com.example.dang_na_bun_gong.Service.BookMarkSerivce;
 import com.example.dang_na_bun_gong.Vo.ResultVo;
@@ -63,12 +65,20 @@ public class ArticleController {
     public @ResponseBody ResultVo articleList(
             @PageableDefault(page = 0, size = 5) Pageable pageable, HttpSession httpSession) {
 
-        Integer regionid = 23080;
-        Page<ArticleEntity> articlelist = articleService.articleListAll(pageable, regionid);
+        Integer regionid = 23080; //(Integer) httpSession.getAttribute("regionid");
+        Integer pcategoryid = null; //test id = 64
+        //pcategoryid = (Integer) httpSession.getAttribute("pcategoryid");
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("ArticleList", articlelist.toString());
-
-        return new ResultVo(0, "ture", "이게 안돼?", jsonObject.toString());
+        if(pcategoryid == null){
+            Page<ArticleListAllEntity> articlelistAll = articleService.articleListAll(pageable, regionid);
+            jsonObject.put("ArticleList", articlelistAll.toString());
+            return new ResultVo(0, "ture", "이게 안돼?", jsonObject.toString());
+        }
+        else{
+            Page<ArticleListEntity> articlelist = articleService.articleList(pageable, regionid, pcategoryid);
+            jsonObject.put("ArticleList", articlelist.toString());
+            return new ResultVo(0, "ture", "이게 안돼?", jsonObject.toString());
+        }
     }
 
 @GetMapping("/articleWrite")
