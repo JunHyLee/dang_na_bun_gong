@@ -13,4 +13,5 @@ public interface ArticleDto {
     String getMember_id();
     String getReview_key();
     Long getCount();
+    Integer getProduct_category_id();
 }

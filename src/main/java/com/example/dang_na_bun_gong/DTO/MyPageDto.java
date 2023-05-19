@@ -12,7 +12,7 @@ public class MyPageDto {
     Integer article_id, like;
     Long count;
 
-    public MyPageDto (ArticleDto articleDto){
+    public MyPageDto(ArticleDto articleDto){
         this.article_id = articleDto.getArticle_id();
         this.member_id  = articleDto.getMember_id();
         this.sell_member_id = articleDto.getSell_member_id();
