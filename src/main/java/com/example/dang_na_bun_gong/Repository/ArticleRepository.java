@@ -34,6 +34,14 @@ public interface ArticleRepository extends JpaRepository<ArticleEntity, Integer>
 	@Query(value = "SELECT article_id, article_title, article_content_fp, price, article.region_id, region.region_name FROM article join region on article.region_id = region.region_id ORDER BY like_cnt DESC LIMIT 15", nativeQuery = true)
 	List<ArticleDto> popularArticle();
 
+	//게시글 리스트 비로그인 전체 출력(카테고리 미선택)
+	@Query(value = "Select article_id, photo_fp, article_title, price From article Order by article_created DESC", countQuery ="SELECT COUNT(*) FROM article", nativeQuery = true)
+	Page<ArticleDto> articleListAllNoLogin(Pageable pageable);
+
+	//게시글 리스트 비로그인 출력(선택한 카테고리만 출력)
+	@Query(value = "Select article_id, photo_fp, article_title, price From article Where product_category_id = :pcategoryid Order by article_created DESC", countQuery ="SELECT COUNT(*) FROM article Where article.product_category_id = :pcategoryid", nativeQuery = true)
+	Page<ArticleDto> articleListNoLogin(Pageable pageable, Integer pcategoryid);
+
 	//게시글 리스트 전체 출력 (카테고리 미선택)
 	@Query(value = "Select article_id, photo_fp, article_title, price From article Where region_id = :regionid Order by article_created DESC", countQuery ="SELECT COUNT(*) FROM article Where article.region_id = :regionid", nativeQuery = true)
 	Page<ArticleDto> articleListAll(Pageable pageable, Integer regionid);

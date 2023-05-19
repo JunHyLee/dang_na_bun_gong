@@ -68,8 +68,78 @@ public class ArticleController {
         return new ResultVo(0, "true", "불러오기 성공", jsonObject.toString());
     }
 
-    //게시물 리스트 보기
-    @GetMapping("/articleList")
+    //게시물 리스트 보기(비로그인상태)                     //로그인 상태의 게시물 리스트와 지역코드만 제외
+    @GetMapping("/articleListNoLogin")  //:8080/articleListNoLogin?page=(숫자)
+    public @ResponseBody ResultVo articleListNoLogin(
+            @PageableDefault(size = 5) Pageable pageable, HttpSession httpSession) {
+
+        Integer pcategoryid = null; //test id = 64
+        //pcategoryid = (Integer) httpSession.getAttribute("pcategoryid");
+
+        JSONObject jsonObject = new JSONObject();
+        List<ArticleListDto> articleListDto = new ArrayList<>();
+
+        //카테고리가 선택되지 않았을 때 (전체 출력)
+        if (pcategoryid == null) {
+            Page<ArticleDto> articlelistAllNoLogin = articleService.articleListAllNoLogin(pageable);
+            Integer lastPageCnt = Math.toIntExact(articlelistAllNoLogin.getTotalElements() - pageable.getOffset()); //마지막 페이지 index overflow 일으키지 않기 위해 따로 계산
+
+            if (pageable.getPageNumber() + 1 > articlelistAllNoLogin.getTotalPages()) {
+                return new ResultVo(309, "false", "마지막 페이지를 초과하였습니다.");
+            } else {
+                if (pageable.getPageNumber() == (articlelistAllNoLogin.getTotalPages() - 1)) {
+                    for (int i = 0; i < lastPageCnt; i++) {
+                        ArticleListDto data = new ArticleListDto(articlelistAllNoLogin.getContent().get(i));
+                        articleListDto.add(data);
+                    }
+                } else {
+                    for (int i = 0; i < articlelistAllNoLogin.getSize(); i++) {
+                        ArticleListDto data = new ArticleListDto(articlelistAllNoLogin.getContent().get(i));
+                        articleListDto.add(data);
+                    }
+                }
+
+                jsonObject.put("nowPage", pageable.getPageNumber() + 1);   //이건 0부터 시작해서 +1 해줌
+                jsonObject.put("endPage", articlelistAllNoLogin.getTotalPages());  //이건 1부터 시작
+                jsonObject.put("ArticleList", articleListDto);
+                articleListDto.clear();
+
+                return new ResultVo(0, "ture", "전체 출력(비로그인입니다.)", jsonObject.toString());
+            }
+        }
+        //카테고리가 선택되었을 때
+        else {
+            Page<ArticleDto> articleListNoLogin = articleService.articleListNoLogin(pageable, pcategoryid);
+            Integer lastPageCnt = Math.toIntExact(articleListNoLogin.getTotalElements() - pageable.getOffset());  //마지막 페이지 index overflow 일으키지 않기 위해 따로 계산
+
+            if (pageable.getPageNumber() + 1 > articleListNoLogin.getTotalPages()) {
+                return new ResultVo(309, "false", "마지막 페이지를 초과하였습니다.");
+            } else {
+                if (pageable.getPageNumber() == (articleListNoLogin.getTotalPages() - 1)) {
+                    for (int i = 0; i < lastPageCnt; i++) {
+                        ArticleListDto data = new ArticleListDto(articleListNoLogin.getContent().get(i));
+                        articleListDto.add(data);
+                    }
+                } else {
+
+                    for (int i = 0; i < articleListNoLogin.getSize(); i++) {
+                        ArticleListDto data = new ArticleListDto(articleListNoLogin.getContent().get(i));
+                        articleListDto.add(data);
+                    }
+                }
+
+                jsonObject.put("nowPage", pageable.getPageNumber() + 1);  //이건 0부터 시작해서 +1 해줌
+                jsonObject.put("endPage", articleListNoLogin.getTotalPages());   //이건 1부터 시작
+                jsonObject.put("ArticleList", articleListDto);
+                articleListDto.clear();
+
+                return new ResultVo(1, "ture", "해당 카테고리 출력(비로그인입니다.)", jsonObject.toString());
+            }
+        }
+    }
+
+    //게시물 리스트 보기 (로그인상태)
+    @GetMapping("/articleList")             //:8080/articleList?page=(숫자)
     public @ResponseBody ResultVo articleList(
             @PageableDefault(size = 5) Pageable pageable, HttpSession httpSession) {
 

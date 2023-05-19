@@ -49,6 +49,12 @@ public class ArticleService {
     }
 
     // 게시글 리스트(article list)
+    public Page<ArticleDto> articleListAllNoLogin(Pageable pageable){
+        return articleRepository.articleListAllNoLogin(pageable);
+    }
+    public Page<ArticleDto> articleListNoLogin(Pageable pageable, Integer pcategoryid){
+        return articleRepository.articleListNoLogin(pageable, pcategoryid);
+    }
     public Page<ArticleDto> articleListAll(Pageable pageable, Integer regionid){
         return articleRepository.articleListAll(pageable, regionid);
     }
