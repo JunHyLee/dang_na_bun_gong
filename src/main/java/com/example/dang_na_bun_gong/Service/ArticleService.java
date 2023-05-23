@@ -33,8 +33,7 @@ public class ArticleService {
     private RegionRepository regionRepository;
 
 
-
-    //main페이지
+//여기부터 main페이지
     public List<ArticleDto> mainPage_current(){
         return articleRepository.currentArticle();
     }
@@ -48,7 +47,7 @@ public class ArticleService {
         return regionRepository.findAll();
     }
 
-    // 게시글 리스트(article list)
+// 여기부터 게시글 리스트(article list)
     public Page<ArticleDto> articleListAllNoLogin(Pageable pageable){
         return articleRepository.articleListAllNoLogin(pageable);
     }

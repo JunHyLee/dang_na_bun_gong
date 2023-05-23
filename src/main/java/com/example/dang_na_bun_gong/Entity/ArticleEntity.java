@@ -53,7 +53,7 @@ public class ArticleEntity {
 	private Timestamp articlechanged;
 
 	@Column(name="article_created")
-	private Timestamp articlecreatede;
+		private Timestamp articlecreatede;
 
 	@Builder
 	public static ArticleEntity toSaveEntity(ArticleWriteDto articleWriteDto) {

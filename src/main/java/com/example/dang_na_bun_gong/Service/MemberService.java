@@ -70,13 +70,8 @@ public class MemberService {
 	}
 	
 	//회원탈퇴
-	
-	// 게시글 리스트 처리
-    public Page<MemberEntity> boardList(Pageable pageable) {
-    	System.out.println("pageable: " + pageable);
 
-        return memberRepository.findAll(pageable);
-    }
+
 
 	public void memberDelete(String memberid){
 		List<MemberEntity> memberEntity = memberRepository.findByMemberid(memberid);

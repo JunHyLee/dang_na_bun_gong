@@ -29,4 +29,8 @@ public interface MemberRepository extends JpaRepository<MemberEntity, String> {
 
 	List<MemberEntity> findByMemberid(String memberid);
 
+//myPage 회원정보 간단 출력
+	@Query(value = "Select member_nickname, member_photo_fp, member_intro From member where member_id = :memberid", nativeQuery = true)
+	List<MemberDto> memberInfo(String memberid);
+
 }
