@@ -10,11 +10,18 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CustomerRepository extends JpaRepository<NotionEntity, Integer>, JpaSpecificationExecutor<NotionEntity> {
 
+    // 고객센터 메인페이지
+    @Query(value = "select quest_title, quest_content_fp from quest_commen ORDER BY quest_id DESC LIMIT 5", nativeQuery = true)
+    List<QuestCommenDto> questCommenListCurrent();
+
     //공지사항 목록
     Page<NotionEntity> findAll(Pageable pageable);
+
 //자주 하는 질문 목록
     @Query(value = "SELECT quest_title, quest_content_fp from quest_commen", countQuery = "SELECT COUNT(*) from quest_commen", nativeQuery = true)
     Page<QuestCommenDto> questCommenListAll(Pageable pageable);

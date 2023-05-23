@@ -30,6 +30,11 @@ public class CustomerService {
         return questCategoryRepository.findAll();
     }
 
+    //고객센터 메인페이지 (자주하는질문 상위 5개 출력)
+    public List<QuestCommenDto> questCommenListCurrent() {
+        return customerRepository.questCommenListCurrent();
+    }
+
 
 //자주하는 질문 목록 출력
     public Page<QuestCommenDto> questCommenListAll(Pageable pageable){

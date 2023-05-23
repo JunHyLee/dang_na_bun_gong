@@ -29,23 +29,19 @@ public class CustomerController {
 
     //고객센터 메인페이지 (재작성 필요)
     @GetMapping("/customerMain")
-    public @ResponseBody ResultVo CustomerMainPage(HttpSession httpSession) {
-        String memberid = httpSession.getAttribute("memberid").toString(); // 세션에서 memberid 가져오기  // test_id = hi123
-        if (memberid == null) {
-            return new ResultVo(289, "false", "회원정보가 없습니다.");
-        } else {
-            List<MemberDto> myPageMemberInfo = myPageService.myPage_memberInfo(memberid);
-            JSONObject jsonObject = new JSONObject();
+    public @ResponseBody ResultVo CustomerMainPage() {
+        List<QuestCommenDto> questCommenListCurrent = customerService.questCommenListCurrent();
+        JSONObject jsonObject = new JSONObject();
+        List<QuestCommenListDto> questCommenListDto = new ArrayList<>();
 
-            List<MyPageMemberDto> myPageMemberDto = new ArrayList<>();
-
-            MyPageMemberDto data1 = new MyPageMemberDto(myPageMemberInfo.get(0)); // 프로필, 닉네임, 사진경로
-            myPageMemberDto.add(data1);
-            jsonObject.put("memberInfo", myPageMemberDto);
-            myPageMemberDto.clear();
-
-            return new ResultVo(0, "ture", "고객센터 메인페이지 회원정보 출력", jsonObject.toString());
+        for(int i=0;i<questCommenListCurrent.size();i++) {
+            QuestCommenListDto data = new QuestCommenListDto((questCommenListCurrent.get(i)));
+            questCommenListDto.add(data);
         }
+        jsonObject.put("QuestCommenListCurrent", questCommenListDto);
+        questCommenListDto.clear();
+
+        return new ResultVo(0, "ture", "자주하는 질문 상위 5개 출력", jsonObject.toString());
     }
 
     //공지사항 목록
