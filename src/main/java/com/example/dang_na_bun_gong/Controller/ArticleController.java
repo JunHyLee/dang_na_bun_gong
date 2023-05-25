@@ -73,8 +73,7 @@ public class ArticleController {
     public @ResponseBody ResultVo articleListNoLogin(
             @PageableDefault(size = 5) Pageable pageable, HttpSession httpSession) {
 
-        Integer pcategoryid = null; //test id = 64
-        //pcategoryid = (Integer) httpSession.getAttribute("pcategoryid");
+        Integer pcategoryid = (Integer) httpSession.getAttribute("pcategoryid"); //test id = 64
 
         JSONObject jsonObject = new JSONObject();
         List<ArticleListDto> articleListDto = new ArrayList<>();
@@ -144,8 +143,7 @@ public class ArticleController {
             @PageableDefault(size = 5) Pageable pageable, HttpSession httpSession) {
 
         Integer regionid = (Integer) httpSession.getAttribute("regionid");  // test id = 23080
-        Integer pcategoryid = null; //test id = 64
-            pcategoryid = (Integer) httpSession.getAttribute("pcategoryid");
+        Integer pcategoryid = (Integer) httpSession.getAttribute("pcategoryid"); //test id = 64
 
         JSONObject jsonObject = new JSONObject();
         List<ArticleListDto> articleListDto = new ArrayList<>();
