@@ -43,6 +43,10 @@ public class CustomerService {
     public Page<QuestCommenDto> questCommenList(Pageable pageable, Integer quest_category_id){
         return customerRepository.questCommenList(pageable, quest_category_id);
     }
+    //자주 하는 질문 상세보기
+    public List<QuestCommenDto> questCommenView(Integer quest_id){
+        return customerRepository.questCommenView(quest_id);
+    }
 
 //내 질문 목록 출력
     public Page<QuestPrivateDto> questPrivateListAll(Pageable pageable, String questioner_id){
@@ -50,7 +54,12 @@ public class CustomerService {
     }
     public Page<QuestPrivateDto> questPrivateList(Pageable pageable, String questioner_id, Integer selected_quest_category_id){
         return customerRepository.questPrivateList(pageable, questioner_id, selected_quest_category_id);
-}
+    }
+    //1대1질문 상세보기
+    public List<QuestPrivateDto> questPrivateView(Integer quest_id){
+        return customerRepository.questPrivateView(quest_id);
+    }
+
 
 
 

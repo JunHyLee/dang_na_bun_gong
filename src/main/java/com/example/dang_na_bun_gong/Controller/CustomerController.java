@@ -27,7 +27,7 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-    //고객센터 메인페이지 (재작성 필요)
+    //고객센터 메인페이지
     @GetMapping("/customerMain")
     public @ResponseBody ResultVo CustomerMainPage() {
         List<QuestCommenDto> questCommenListCurrent = customerService.questCommenListCurrent();
@@ -65,6 +65,13 @@ public class CustomerController {
     }
 
     // 1대1 질문 작성 페이지
+    @GetMapping("questPrivateWrite")
+    public @ResponseBody ResultVo questPrivateWrite(HttpSession httpSession){
+        String questioner_id = httpSession.getAttribute("memberid").toString();
+
+
+        return new ResultVo(0, "ture", "질문 등록 완료");
+    }
 
 
     // 내 질문 목록
@@ -128,6 +135,28 @@ public class CustomerController {
                     return new ResultVo(1, "true", "내 질문 목록 출력(카테고리 입력)", jsonObject.toString());
                 }
             }
+        }
+    }
+
+    // 1대1 질문 상세보기
+    @GetMapping("/questPrivateView")
+    public @ResponseBody ResultVo questPrivateView(HttpSession httpSession){
+        Integer quest_id = 2;//(Integer) httpSession.getAttribute("quest_id");
+        if(quest_id == null){
+            return new ResultVo(101, "false", "존재하지 않는 글입니다.");
+        } else {
+            List<QuestPrivateDto> questPrivateView = customerService.questPrivateView(quest_id);
+                System.out.println(questPrivateView);
+
+            List<QuestPrivateViewDto> questPrivateViewDto = new ArrayList<>();
+            JSONObject jsonObject = new JSONObject();
+
+            QuestPrivateViewDto data = new QuestPrivateViewDto(questPrivateView.get(0));
+            questPrivateViewDto.add(data);
+            jsonObject.put("QuestPrivateView", questPrivateViewDto);
+            questPrivateViewDto.clear();
+
+            return new ResultVo(0, "true", "1대1질문 상세보기 출력", jsonObject.toString());
         }
     }
 
@@ -195,7 +224,26 @@ public class CustomerController {
     }
 
 
-    // 질문 및 답변 상세보기
+    // 자주하는 질문 상세보기
+    @GetMapping("/questCommenView")
+    public @ResponseBody ResultVo questCommenView(HttpSession httpSession){
+        Integer quest_id = 1;//(Integer) httpSession.getAttribute("quest_id");
+        if(quest_id == null){
+            return new ResultVo(101, "false", "존재하지 않는 글입니다.");
+        } else {
+            List<QuestCommenDto> questCommenView = customerService.questCommenView(quest_id);
+            List<QuestCommenViewDto> questCommenViewDto = new ArrayList<>();
+            JSONObject jsonObject = new JSONObject();
+
+            QuestCommenViewDto data = new QuestCommenViewDto(questCommenView.get(0));
+            questCommenViewDto.add(data);
+            jsonObject.put("QuestCommenView", questCommenViewDto);
+            questCommenViewDto.clear();
+
+            return new ResultVo(0, "true", "자주하는 질문 상세보기 출력", jsonObject.toString());
+        }
+    }
+
 
 
 }
