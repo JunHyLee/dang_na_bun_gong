@@ -2,15 +2,22 @@ package com.example.dang_na_bun_gong.Service;
 
 import com.example.dang_na_bun_gong.DTO.QuestCommenDto;
 import com.example.dang_na_bun_gong.DTO.QuestPrivateDto;
+import com.example.dang_na_bun_gong.DTO.QuestPrivateWriteDto;
 import com.example.dang_na_bun_gong.Entity.*;
 import com.example.dang_na_bun_gong.Repository.CustomerRepository;
 import com.example.dang_na_bun_gong.Repository.QuestCategoryRepository;
+import com.example.dang_na_bun_gong.Repository.QuestPrivateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CustomerService {
@@ -19,6 +26,8 @@ public class CustomerService {
     CustomerRepository customerRepository;
     @Autowired
     QuestCategoryRepository questCategoryRepository;
+    @Autowired
+    QuestPrivateRepository questPrivateRepository;
 
     //공지사항 목록 출력
     public Page<NotionEntity> notionList(Pageable pageable){
@@ -58,6 +67,11 @@ public class CustomerService {
     //1대1질문 상세보기
     public List<QuestPrivateDto> questPrivateView(Integer quest_id){
         return customerRepository.questPrivateView(quest_id);
+    }
+
+    //1대1질문 작성
+    public void questPrivateWrite(QuestPrivateEntity questPrivateEntity){
+        questPrivateRepository.save(questPrivateEntity);
     }
 
 

@@ -1,7 +1,6 @@
 package com.example.dang_na_bun_gong.Repository;
 
 import com.example.dang_na_bun_gong.DTO.ArticleDto;
-import com.example.dang_na_bun_gong.DTO.MemberDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

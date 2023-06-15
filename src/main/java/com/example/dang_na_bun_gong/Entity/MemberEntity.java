@@ -6,9 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.example.dang_na_bun_gong.DTO.MemberUpdateDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 @DynamicUpdate
@@ -16,6 +18,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity(name="member")
 //@DynamicUpdate
 @Getter
+@Setter
 public class MemberEntity {
 
     @Id
@@ -76,35 +79,4 @@ public class MemberEntity {
         this.memberphotofp = memberphotofp;
     }
 
-    public void setMembername(String membername) {
-        this.membername = membername;
-    }
-
-    public void setMembertel(String membertel) {
-        this.membertel = membertel;
-    }
-
-    public void setMemberchanged(Timestamp memberchanged) {
-        this.memberchanged = memberchanged;
-    }
-
-    public void setMemberNickname(String membernickname) {
-        this.membernickname = membernickname;
-    }
-
-    public void setMembermail(String membermail) {
-        this.membertel = membermail;
-    }
-
-    public void setMemberregion(Integer memberregion) {
-        this.memberregion = memberregion;
-    }
-
-    public void setMemberphotofp(String memberphotofp) {
-        this.memberphotofp = memberphotofp;
-    }
-
-    public void setMemberintro(String memberintro) {
-        this.memberintro = memberintro;
-    }
 }

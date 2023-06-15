@@ -1,6 +1,7 @@
 package com.example.dang_na_bun_gong.Service;
 
 import java.io.*;
+import java.lang.reflect.Member;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -65,8 +66,8 @@ public class MemberService {
 	}
 	
 	//회원수정
-	public void memberUpdate(List<MemberEntity> findEntity) {
-		memberRepository.saveAll(findEntity);
+	public void memberUpdate(MemberEntity memberEntity) {
+		memberRepository.save(memberEntity);
 	}
 	
 	//회원탈퇴

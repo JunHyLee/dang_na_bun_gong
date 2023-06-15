@@ -2,7 +2,7 @@ package com.example.dang_na_bun_gong.Controller;
 
 import com.example.dang_na_bun_gong.DTO.MemberJoinDto;
 import com.example.dang_na_bun_gong.DTO.MemberLoginDto;
-import com.example.dang_na_bun_gong.DTO.MyPageMemberDto;
+import com.example.dang_na_bun_gong.DTO.MemberUpdateDto;
 import com.example.dang_na_bun_gong.Vo.ResultVo;
 import com.example.dang_na_bun_gong.Entity.MemberEntity;
 import com.example.dang_na_bun_gong.Repository.MemberRepository;
@@ -10,22 +10,22 @@ import com.example.dang_na_bun_gong.Service.MemberService;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpSession;
 
-import java.lang.reflect.Member;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Controller
@@ -259,33 +259,33 @@ public class MemberController {
 
 	//회원정보 저장하기
 	@PatchMapping("memberUpdateDo")
-	public @ResponseBody ResultVo memberUpdateDo(HttpSession httpSession, MemberEntity memberEntity){
+	public @ResponseBody ResultVo memberUpdateDo(MemberUpdateDto memberUpdateDto, HttpSession httpSession, MultipartFile[] uploadFile) throws IOException {
 			String memberid = httpSession.getAttribute("memberid").toString();
-			List<MemberEntity> findEntity = memberService.getMemberInfo(memberid);
-			if(memberid != null) {
-				findEntity.get(0).setMembername(memberEntity.getMembername()); // 이름
-				findEntity.get(0).setMemberNickname(memberEntity.getMembernickname()); // 닉네임
-				findEntity.get(0).setMembertel(memberEntity.getMembertel()); // 전화번호
-				findEntity.get(0).setMembermail(memberEntity.getMembermail()); // 이메일
-				findEntity.get(0).setMemberregion(memberEntity.getMemberregion()); // 지역코드
-				findEntity.get(0).setMemberphotofp(memberEntity.getMemberphotofp());
-				findEntity.get(0).setMemberintro(memberEntity.getMemberintro());// 소개글(짧은글)
-				LocalDateTime now = LocalDateTime.now();
-				findEntity.get(0).setMemberchanged(Timestamp.valueOf(now)); // 수정시간(현재)
+			MemberEntity memberEntity = (MemberEntity) memberRepository.findByMemberid(memberid);
+			memberEntity.setMembername(memberUpdateDto.getMemberName());
+			memberEntity.setMembertel(memberUpdateDto.getMemberTel());
+			memberEntity.setMembernickname(memberUpdateDto.getMemberNickname());
+			memberEntity.setMemberintro(memberUpdateDto.getMemberIntro());
+			memberEntity.setMembermail(memberUpdateDto.getMemberMail());
+			memberEntity.setMemberregion(memberUpdateDto.getMemberRegionId());
+			memberEntity.setMemberbirth(memberUpdateDto.getMemberBirth());
+			memberEntity.setMembergender(memberUpdateDto.getMemberGender());
+			memberEntity.setMemberchanged(Timestamp.valueOf(LocalDateTime.now()));
 
-				memberService.memberUpdate(findEntity); // memberInfo에 저장한 값 DB로 저장
-				return new ResultVo(0, "ture", "변경완료");
-			}
-			else {
-				return new ResultVo(101, "false", "변경실패");
-			}
-			}
+			String photoPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
 
-	/*@PostMapping("/memberUpdateDo")
-	public @ResponseBody ResultVo memberUpdateDo(HttpSession httpSession, MemberUpdateEntity memberUpdateEntity) {
-		List<MemberEntity> findEntity = memberService.getMemberInfo(httpSession.getAttribute("memberid").toString());
-		findEntity.get(0).setMembername(memberEntity.getMembername());
+			for(MultipartFile multipartFile: uploadFile) {
+				UUID uuid = UUID.randomUUID();
+				//String fileName = uuid + "_" + file.getOriginalFilename();
+				String photoName = uuid.toString().replaceAll("-", "").toUpperCase();
+				File saveFile = new File(photoPath, photoName + ".jpg");
+				multipartFile.transferTo(saveFile);
+				memberEntity.setMemberphotofp(photoPath + photoName + ".jpg");
+			}
+			memberService.memberUpdate(memberEntity); // memberInfo에 저장한 값 DB로 저장
+			return new ResultVo(0, "ture", "변경완료");
 	}
+}
 
 
 	// 회원정보 수정
@@ -348,5 +348,3 @@ public class MemberController {
 	 * searchParamRepoMember(@RequestParam(value = "name") String name) { return
 	 * memberEntityRepository.searchParamRepo(name).toString(); }
 	 */
-
-}

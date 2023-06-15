@@ -2,6 +2,7 @@ package com.example.dang_na_bun_gong.Controller;
 
 import com.example.dang_na_bun_gong.DTO.*;
 import com.example.dang_na_bun_gong.Entity.NotionEntity;
+import com.example.dang_na_bun_gong.Entity.QuestPrivateEntity;
 import com.example.dang_na_bun_gong.Service.CustomerService;
 import com.example.dang_na_bun_gong.Service.MyPageService;
 import com.example.dang_na_bun_gong.Vo.ResultVo;
@@ -16,8 +17,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpSession;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class CustomerController {
@@ -65,12 +71,40 @@ public class CustomerController {
     }
 
     // 1대1 질문 작성 페이지
-    @GetMapping("questPrivateWrite")
-    public @ResponseBody ResultVo questPrivateWrite(HttpSession httpSession){
+    @GetMapping("/questPrivateWrite")
+    public @ResponseBody ResultVo questPrivateWrite(QuestPrivateWriteDto questPrivateWrite, HttpSession httpSession){
         String questioner_id = httpSession.getAttribute("memberid").toString();
+        QuestPrivateEntity questPrivateEntity = new QuestPrivateEntity();
+        questPrivateEntity.setQuestionerId(questioner_id);
+        questPrivateEntity.setQuestTitle(questPrivateWrite.getQuestTitle());
+        questPrivateEntity.setQuestCategoryId(questPrivateWrite.getQuestCateogoryId());
 
+        String contentPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\text";
 
-        return new ResultVo(0, "ture", "질문 등록 완료");
+        UUID uuidContent = UUID.randomUUID();
+
+        String textName = uuidContent.toString().replaceAll("-", "").toUpperCase();
+
+        try{
+            // BufferedWriter 와 FileWriter를 조합하여 사용 (속도 향상)
+            File savetext = new File(contentPath,textName + ".txt");
+            BufferedWriter fw = new BufferedWriter(new FileWriter(savetext, true));
+
+            // 파일안에 문자열 쓰기
+            fw.write(questPrivateWrite.getQuestContent());
+            fw.flush();
+            questPrivateEntity.setQuestContentFp("/text/" + textName + ".txt");
+            // 객체 닫기
+            fw.close();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        customerService.questPrivateWrite(questPrivateEntity);
+
+        return new ResultVo(0, "ture", "질문등록완료");
     }
 
 
